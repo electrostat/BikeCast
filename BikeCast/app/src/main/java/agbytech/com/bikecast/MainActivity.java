@@ -1,5 +1,6 @@
 package agbytech.com.bikecast;
 
+import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -95,7 +96,10 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_preference) {
+            Intent i = new Intent(getApplicationContext(), PreferenceActivity.class);
+            startActivity(i);
+
             return true;
         }
 
