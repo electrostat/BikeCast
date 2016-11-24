@@ -9,11 +9,21 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity {
+    private final String LOG_TAG="BikeCast";
 
     //initial location zoom
     private LocationManager gpsLocManager;
@@ -52,6 +62,22 @@ public class MainActivity extends AppCompatActivity {
 //                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
 //                    REQUEST_CODE_PERMISSION);
 //        }
+
+        forecast.forecastListener.setOnForecastChangeListener(new OnForecastChangeListener() {
+            @Override
+            public void onForecastChanged(JSONArray hourly) throws JSONException {
+                Log.e(LOG_TAG, "Acquired");
+
+                JSONObject hour1 = hourly.getJSONObject(0);
+                long time1 = hour1.getLong("time");
+
+                Date date = new Date(time1);
+                DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
+                String dateFormatted = formatter.format(date);
+
+                Log.e(LOG_TAG, "first hour: " + dateFormatted);
+            }
+        });
     }
 
 //    @Override
