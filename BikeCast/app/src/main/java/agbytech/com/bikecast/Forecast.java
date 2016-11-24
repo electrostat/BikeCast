@@ -18,8 +18,11 @@ import javax.net.ssl.HttpsURLConnection;
 public class Forecast {
     private final String LOG_TAG="BikeCast";
 
-    public void getForecast(final Location location){
+    static Config config = new Config();
 
+    private static String API_KEY = config.darksky;
+
+    public void getForecast(final Location location){
         //track most recent outdoor location point for reporting
         new Thread(){
             public void run(){
