@@ -13,6 +13,9 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -48,6 +51,15 @@ public class Forecast {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONObject hourlyObject = jsonObject.getJSONObject("hourly");
                     hourly = hourlyObject.getJSONArray("data");
+
+                    JSONObject hour1 = hourly.getJSONObject(0);
+                    long time1 = hour1.getLong("time");
+
+                    Date date = new Date(time1);
+                    DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
+                    String dateFormatted = formatter.format(date);
+
+//                    Log.e(LOG_TAG, "first hour: " + dateFormatted);
                 }
                 catch (MalformedURLException ex){
                     Log.e(LOG_TAG, "Invalid URL", ex);
