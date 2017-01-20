@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_PERMISSION = 2;
 
     public Forecast forecast = new Forecast();
+    private TextView bikeResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        bikeResult = (TextView) findViewById(R.id.bikeResponse);
     }
 
     @Override
@@ -75,7 +78,28 @@ public class MainActivity extends AppCompatActivity {
                 DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
                 String dateFormatted = formatter.format(date);
 
-                Log.e(LOG_TAG, "first hour: " + dateFormatted);
+                Log.e(LOG_TAG, "first hour: " + hour1);
+                Log.e(LOG_TAG, "should I bike? " + okToBike(hour1));
+
+                bikeResult = ((TextView) findViewById(R.id.bikeResponse));
+
+                if(okToBike(hour1)){
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            bikeResult.setText("Yep");
+                        }
+                    });
+                }else{
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            bikeResult.setText("Nope");
+                        }
+                    });
+                }
+
             }
         });
     }
@@ -174,5 +198,38 @@ public class MainActivity extends AppCompatActivity {
         public void onProviderDisabled(String provider) {}
     };
 
+
+    private boolean okToBike(JSONObject anHour) throws JSONException {
+
+        //parameters I care about
+        double precipIntensity = anHour.getDouble("precipIntensity");
+        double precipProbability = anHour.getDouble("precipProbability");
+        double windSpd = anHour.getDouble("windSpeed");
+        double feelTemp = anHour.getDouble("apparentTemperature");
+        double humidity = anHour.getDouble("humidity");
+
+        //conditions I care about
+        boolean humidHot = false;
+        boolean coldWindy = false;
+        boolean rainy = false;
+
+        if(feelTemp > 90 && humidity > 0.9){
+            humidHot = true;
+        }
+
+        if(feelTemp < 10 && windSpd > 15){
+            coldWindy = true;
+        }
+
+        if(precipIntensity > 0.5 && precipProbability > 0.5){
+            rainy = true;
+        }
+
+        if(humidHot || coldWindy || rainy){
+            return false;
+        }else{
+            return true;
+        }
+    }
 
 }

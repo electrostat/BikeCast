@@ -23,7 +23,6 @@ public class ForecastListener {
 
         hourly = aHourly;
 
-
         if(listener != null){
 
             listener.onForecastChanged(aHourly);
