@@ -30,7 +30,7 @@ public class Forecast {
 
     public static ForecastListener forecastListener = new ForecastListener();
 
-    public void getForecast(final Location location){
+    public void getCurrent(final Location location){
         //track most recent outdoor location point for reporting
         new Thread(){
             public void run(){
@@ -72,6 +72,47 @@ public class Forecast {
         }.start();
     }
 
+    public void getCommute(final Location location, final int time){
+        //track most recent outdoor location point for reporting
+        new Thread(){
+            public void run(){
+                HttpURLConnection connection = null;
+
+                try{
+                    URL myURL = new URL("https://api.forecast.io/forecast/" + API_KEY + "/" + location.getLatitude() + "," + location.getLongitude() + "," + time);
+                    connection = (HttpsURLConnection)myURL.openConnection();
+                    connection.setRequestMethod("GET");
+
+                    connection.connect();
+
+                    InputStream iStream = connection.getInputStream();
+
+                    String response = readStream(iStream);
+
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONObject hourlyObject = jsonObject.getJSONObject("hourly");
+                    hourly = hourlyObject.getJSONArray("data");
+
+                    forecastListener.set(hourly);
+                }
+                catch (MalformedURLException ex){
+                    Log.e(LOG_TAG, "Invalid URL", ex);
+                }
+                catch (IOException ex){
+                    Log.e(LOG_TAG, "IO/Connection Error", ex);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                    if(connection == null){
+                        connection.disconnect();
+                    }
+
+                    currentThread().interrupt();
+                }
+
+            }
+        }.start();
+    }
 
     private String readStream(InputStream is) {
 

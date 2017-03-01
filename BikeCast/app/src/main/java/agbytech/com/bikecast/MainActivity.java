@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
             gpsLocManager.removeUpdates(burstListener);
             netLocManager.removeUpdates(burstListener);
 
-            forecast.getForecast(location);
+            forecast.getCurrent(location);
         }
 
         public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -213,6 +213,15 @@ public class MainActivity extends AppCompatActivity {
         boolean coldWindy = false;
         boolean rainy = false;
 
+        //standalone limits
+        if(feelTemp < 5 || feelTemp > 100){
+            return false;
+        }
+
+        if(windSpd > 20){
+            return  false;
+        }
+
         if(feelTemp > 90 && humidity > 0.9){
             humidHot = true;
         }
@@ -221,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
             coldWindy = true;
         }
 
-        if(precipIntensity > 0.5 && precipProbability > 0.5){
+        if(precipIntensity > 0.3 && precipProbability > 0.5){
             rainy = true;
         }
 
