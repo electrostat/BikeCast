@@ -1,7 +1,7 @@
-package agbytech.com.bikecast;
+package agbytech.com.bikecast.Listeners;
 
-import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by Anthony-Parkour on 11/23/16.
@@ -9,23 +9,23 @@ import org.json.JSONException;
 public class ForecastListener {
     public OnForecastChangeListener listener;
 
-    public JSONArray hourly;
+    public JSONObject currently;
 
     public void setOnForecastChangeListener(OnForecastChangeListener listener){
         this.listener = listener;
     }
 
-    public JSONArray get(){
-        return hourly;
+    public JSONObject get(){
+        return currently;
     }
 
-    public void set(JSONArray aHourly) throws JSONException {
+    public void set(JSONObject aCurrent) throws JSONException {
 
-        hourly = aHourly;
+        currently = aCurrent;
 
         if(listener != null){
 
-            listener.onForecastChanged(aHourly);
+            listener.onForecastChanged(aCurrent);
         }else{
         }
     }

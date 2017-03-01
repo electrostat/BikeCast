@@ -16,6 +16,8 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import agbytech.com.bikecast.Listeners.ForecastListener;
+
 /**
  * Created by Anthony-Parkour on 5/29/16.
  */
@@ -26,6 +28,7 @@ public class Forecast {
 
     private static String API_KEY = config.darksky;
 
+    public JSONArray current;
     public JSONArray hourly;
 
     public static ForecastListener forecastListener = new ForecastListener();
@@ -48,10 +51,12 @@ public class Forecast {
                     String response = readStream(iStream);
 
                     JSONObject jsonObject = new JSONObject(response);
-                    JSONObject hourlyObject = jsonObject.getJSONObject("hourly");
-                    hourly = hourlyObject.getJSONArray("data");
 
-                    forecastListener.set(hourly);
+                    Log.e(LOG_TAG, "entire object: " + jsonObject);
+                    JSONObject currentlyObject = jsonObject.getJSONObject("currently");
+//                    current = currentlyObject.getJSONArray("data");
+
+                    forecastListener.set(currentlyObject);
                 }
                 catch (MalformedURLException ex){
                     Log.e(LOG_TAG, "Invalid URL", ex);
@@ -93,7 +98,7 @@ public class Forecast {
                     JSONObject hourlyObject = jsonObject.getJSONObject("hourly");
                     hourly = hourlyObject.getJSONArray("data");
 
-                    forecastListener.set(hourly);
+//                    forecastListener.set(hourly);
                 }
                 catch (MalformedURLException ex){
                     Log.e(LOG_TAG, "Invalid URL", ex);

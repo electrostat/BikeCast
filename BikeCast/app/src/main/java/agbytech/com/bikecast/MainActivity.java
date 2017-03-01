@@ -15,13 +15,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import agbytech.com.bikecast.Listeners.OnForecastChangeListener;
 
 public class MainActivity extends AppCompatActivity {
     private final String LOG_TAG="BikeCast";
@@ -67,11 +68,12 @@ public class MainActivity extends AppCompatActivity {
 //        }
 
         forecast.forecastListener.setOnForecastChangeListener(new OnForecastChangeListener() {
+
             @Override
-            public void onForecastChanged(JSONArray hourly) throws JSONException {
+            public void onForecastChanged(JSONObject hourly) throws JSONException {
                 Log.e(LOG_TAG, "Acquired");
 
-                JSONObject hour1 = hourly.getJSONObject(0);
+                JSONObject hour1 = hourly;
                 long time1 = hour1.getLong("time");
 
                 Date date = new Date(time1);
@@ -178,8 +180,6 @@ public class MainActivity extends AppCompatActivity {
 //        }
         gpsLocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 0, burstListener);
         netLocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 0, burstListener);
-
-
     }
 
     private LocationListener burstListener = new LocationListener() {
