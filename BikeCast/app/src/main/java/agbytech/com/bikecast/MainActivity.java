@@ -20,9 +20,12 @@ import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
+import agbytech.com.bikecast.Listeners.OnEveningChangeListener;
 import agbytech.com.bikecast.Listeners.OnForecastChangeListener;
+import agbytech.com.bikecast.Listeners.OnMorningChangeListener;
 
 public class MainActivity extends AppCompatActivity {
     private final String LOG_TAG="BikeCast";
@@ -82,6 +85,78 @@ public class MainActivity extends AppCompatActivity {
 
                 Log.e(LOG_TAG, "first hour: " + hour1);
                 Log.e(LOG_TAG, "should I bike? " + okToBike(hour1));
+
+                bikeResult = ((TextView) findViewById(R.id.bikeResponse));
+
+                if(okToBike(hour1)){
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            bikeResult.setText("Yep");
+                        }
+                    });
+                }else{
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            bikeResult.setText("Nope");
+                        }
+                    });
+                }
+
+            }
+        });
+
+        forecast.morningListener.setOnMorningChangeListener(new OnMorningChangeListener() {
+
+            @Override
+            public void onMorningChanged(JSONObject hourly) throws JSONException {
+
+                JSONObject hour1 = hourly;
+                long time1 = hour1.getLong("time");
+
+                Date date = new Date(time1);
+                DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
+                String dateFormatted = formatter.format(date);
+
+                Log.e(LOG_TAG, "should I bike in the morning? " + okToBike(hour1));
+
+                bikeResult = ((TextView) findViewById(R.id.bikeResponse));
+
+                if(okToBike(hour1)){
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            bikeResult.setText("Yep");
+                        }
+                    });
+                }else{
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            bikeResult.setText("Nope");
+                        }
+                    });
+                }
+
+            }
+        });
+
+        forecast.eveningListener.setOnEveningChangeListener(new OnEveningChangeListener() {
+
+            @Override
+            public void onEveningChanged(JSONObject hourly) throws JSONException {
+
+                JSONObject hour1 = hourly;
+                long time1 = hour1.getLong("time");
+
+                Date date = new Date(time1);
+                DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
+                String dateFormatted = formatter.format(date);
+
+                Log.e(LOG_TAG, "should I bike in the evening? " + okToBike(hour1));
 
                 bikeResult = ((TextView) findViewById(R.id.bikeResponse));
 
@@ -189,6 +264,7 @@ public class MainActivity extends AppCompatActivity {
             netLocManager.removeUpdates(burstListener);
 
             forecast.getCurrent(location);
+            callCommute(location);
         }
 
         public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -241,4 +317,42 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void callCommute(Location location){
+        forecast.getMorning(location, determineMorningTime());
+        forecast.getEvening(location, determineEveningTime());
+    }
+
+    private long determineMorningTime(){
+        int morn = 10;
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, morn);
+        Date date = cal.getTime();
+
+        long mornTime = date.getTime();
+        long currentTime= System.currentTimeMillis();
+
+        if(currentTime > mornTime){
+            return (mornTime + 86400000)/1000;
+        }else{
+            return mornTime/1000;
+        }
+    }
+
+    private long determineEveningTime(){
+        int evening = 18;
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, evening);
+        Date date = cal.getTime();
+
+        long evenTime = date.getTime();
+        long currentTime= System.currentTimeMillis();
+
+        if(currentTime > evenTime){
+            return (evenTime + 86400000)/1000;
+        }else{
+            return evenTime/1000;
+        }
+    }
 }
