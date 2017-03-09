@@ -16,6 +16,10 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import agbytech.com.bikecast.Listeners.EveningListener;
+import agbytech.com.bikecast.Listeners.ForecastListener;
+import agbytech.com.bikecast.Listeners.MorningListener;
+
 /**
  * Created by Anthony-Parkour on 5/29/16.
  */
@@ -26,11 +30,15 @@ public class Forecast {
 
     private static String API_KEY = config.darksky;
 
+    public JSONArray current;
     public JSONArray hourly;
 
     public static ForecastListener forecastListener = new ForecastListener();
+    public static MorningListener morningListener = new MorningListener();
+    public static EveningListener eveningListener = new EveningListener();
 
-    public void getForecast(final Location location){
+
+    public void getCurrent(final Location location){
         //track most recent outdoor location point for reporting
         new Thread(){
             public void run(){
@@ -48,10 +56,11 @@ public class Forecast {
                     String response = readStream(iStream);
 
                     JSONObject jsonObject = new JSONObject(response);
-                    JSONObject hourlyObject = jsonObject.getJSONObject("hourly");
-                    hourly = hourlyObject.getJSONArray("data");
 
-                    forecastListener.set(hourly);
+                    Log.e(LOG_TAG, "entire object: " + jsonObject);
+                    JSONObject currentlyObject = jsonObject.getJSONObject("currently");
+
+                    forecastListener.set(currentlyObject);
                 }
                 catch (MalformedURLException ex){
                     Log.e(LOG_TAG, "Invalid URL", ex);
@@ -72,6 +81,87 @@ public class Forecast {
         }.start();
     }
 
+    public void getMorning(final Location location, final long time){
+        //track most recent outdoor location point for reporting
+        new Thread(){
+            public void run(){
+                HttpURLConnection connection = null;
+
+                try{
+                    URL myURL = new URL("https://api.forecast.io/forecast/" + API_KEY + "/" + location.getLatitude() + "," + location.getLongitude() + "," + time);
+                    connection = (HttpsURLConnection)myURL.openConnection();
+                    connection.setRequestMethod("GET");
+
+                    connection.connect();
+
+                    InputStream iStream = connection.getInputStream();
+
+                    String response = readStream(iStream);
+
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONObject currentlyObject = jsonObject.getJSONObject("currently");
+
+                    morningListener.set(currentlyObject);
+                }
+                catch (MalformedURLException ex){
+                    Log.e(LOG_TAG, "Invalid URL", ex);
+                }
+                catch (IOException ex){
+                    Log.e(LOG_TAG, "IO/Connection Error", ex);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                    if(connection == null){
+                        connection.disconnect();
+                    }
+
+                    currentThread().interrupt();
+                }
+
+            }
+        }.start();
+    }
+
+    public void getEvening(final Location location, final long time){
+        //track most recent outdoor location point for reporting
+        new Thread(){
+            public void run(){
+                HttpURLConnection connection = null;
+
+                try{
+                    URL myURL = new URL("https://api.forecast.io/forecast/" + API_KEY + "/" + location.getLatitude() + "," + location.getLongitude() + "," + time);
+                    connection = (HttpsURLConnection)myURL.openConnection();
+                    connection.setRequestMethod("GET");
+
+                    connection.connect();
+
+                    InputStream iStream = connection.getInputStream();
+
+                    String response = readStream(iStream);
+
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONObject currentlyObject = jsonObject.getJSONObject("currently");
+
+                    eveningListener.set(currentlyObject);
+                }
+                catch (MalformedURLException ex){
+                    Log.e(LOG_TAG, "Invalid URL", ex);
+                }
+                catch (IOException ex){
+                    Log.e(LOG_TAG, "IO/Connection Error", ex);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                    if(connection == null){
+                        connection.disconnect();
+                    }
+
+                    currentThread().interrupt();
+                }
+
+            }
+        }.start();
+    }
 
     private String readStream(InputStream is) {
 
