@@ -20,6 +20,7 @@ import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -38,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
 
     public Forecast forecast = new Forecast();
     private TextView bikeResult;
+
+    private ArrayList <WeatherBool> weatherBools = new ArrayList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart(){
         super.onStart();
+
+        setBools();
 
 //        if (ContextCompat.checkSelfPermission(this,
 //                Manifest.permission.ACCESS_FINE_LOCATION)
@@ -310,6 +315,11 @@ public class MainActivity extends AppCompatActivity {
             rainy = true;
         }
 
+        //test weatherbool system
+        for(int i = 0; i < weatherBools.size(); i++){
+            Log.e(LOG_TAG, "weather bool test: " + weatherBools.get(i).isTrue());
+        }
+
         if(humidHot || coldWindy || rainy){
             return false;
         }else{
@@ -354,5 +364,20 @@ public class MainActivity extends AppCompatActivity {
         }else{
             return evenTime/1000;
         }
+    }
+
+    private void setBools(){
+
+        WeatherBool weatherBool = new WeatherBool();
+
+        weatherBool.param1 = "feelTemp";
+        weatherBool.operator1 = ">";
+        weatherBool.value1 = 90;
+
+        weatherBool.param2 = "humidity";
+        weatherBool.operator2 = ">";
+        weatherBool.value2 = 0.9;
+
+        weatherBools.add(weatherBool);
     }
 }
