@@ -317,7 +317,7 @@ public class MainActivity extends AppCompatActivity {
 
         //test weatherbool system
         for(int i = 0; i < weatherBools.size(); i++){
-            Log.e(LOG_TAG, "weather bool test: " + weatherBools.get(i).isTrue());
+            Log.e(LOG_TAG, "weather bool test. is it's state true?: " + weatherBools.get(i).isTrue(anHour));
         }
 
         if(humidHot || coldWindy || rainy){
@@ -370,9 +370,11 @@ public class MainActivity extends AppCompatActivity {
 
         WeatherBool weatherBool = new WeatherBool();
 
-        weatherBool.param1 = "feelTemp";
+        weatherBool.param1 = "apparentTemperature";
         weatherBool.operator1 = ">";
         weatherBool.value1 = 90;
+
+//        weatherBool.combiner = "&&";
 
         weatherBool.param2 = "humidity";
         weatherBool.operator2 = ">";
