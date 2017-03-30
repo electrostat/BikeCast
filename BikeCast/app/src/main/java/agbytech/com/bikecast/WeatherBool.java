@@ -27,32 +27,10 @@ public class WeatherBool {
             boolean param2OK = convertOperands(param2, operator2, value2, thisForecast);
 
                 return param1OK && param2OK;
-//            if(combiner.equals("&&")){
-//                if(param1OK && param2OK){
-//                    Log.e(LOG_TAG, "both param1 and param2 called");
-//                    return false;
-//                }else{
-//                    return true;
-//                }
-//            }else{
-//                if(param1OK || param2OK){
-//                    return true;
-//                }else{
-//                    return false;
-//                }
-//            }
         }else{
 
             return param1OK;
-//            if(param1OK){
-//
-//                return false;
-//            }else{
-//                return true;
-//            }
         }
-
-//        return true;
     }
 
     private boolean convertOperands(String param, String operator, double value, JSONObject thisForecast) throws JSONException {
