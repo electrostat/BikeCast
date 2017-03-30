@@ -20,6 +20,7 @@ import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -38,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
 
     public Forecast forecast = new Forecast();
     private TextView bikeResult;
+
+    private ArrayList <WeatherBool> weatherBools = new ArrayList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart(){
         super.onStart();
+
+        setBools();
 
 //        if (ContextCompat.checkSelfPermission(this,
 //                Manifest.permission.ACCESS_FINE_LOCATION)
@@ -276,45 +281,14 @@ public class MainActivity extends AppCompatActivity {
 
 
     private boolean okToBike(JSONObject anHour) throws JSONException {
-
-        //parameters I care about
-        double precipIntensity = anHour.getDouble("precipIntensity");
-        double precipProbability = anHour.getDouble("precipProbability");
-        double windSpd = anHour.getDouble("windSpeed");
-        double feelTemp = anHour.getDouble("apparentTemperature");
-        double humidity = anHour.getDouble("humidity");
-
-        //conditions I care about
-        boolean humidHot = false;
-        boolean coldWindy = false;
-        boolean rainy = false;
-
-        //standalone limits
-        if(feelTemp < 5 || feelTemp > 100){
-            return false;
+        //test weatherbool system
+        for(int i = 0; i < weatherBools.size(); i++) {
+            if (weatherBools.get(i).isTrue(anHour)) {
+                return false;
+            }
         }
 
-        if(windSpd > 20){
-            return  false;
-        }
-
-        if(feelTemp > 90 && humidity > 0.9){
-            humidHot = true;
-        }
-
-        if(feelTemp < 10 && windSpd > 15){
-            coldWindy = true;
-        }
-
-        if(precipIntensity > 0.3 && precipProbability > 0.5){
-            rainy = true;
-        }
-
-        if(humidHot || coldWindy || rainy){
-            return false;
-        }else{
-            return true;
-        }
+        return true;
     }
 
     private void callCommute(Location location){
@@ -354,5 +328,69 @@ public class MainActivity extends AppCompatActivity {
         }else{
             return evenTime/1000;
         }
+    }
+
+    private void setBools(){
+        WeatherBool weatherBool1 = new WeatherBool();
+
+        weatherBool1.param1 = "apparentTemperature";
+        weatherBool1.operator1 = ">";
+        weatherBool1.value1 = 90;
+        weatherBool1.param2 = "humidity";
+        weatherBool1.operator2 = ">";
+        weatherBool1.value2 = 0.9;
+
+        weatherBools.add(weatherBool1);
+
+        //2
+        WeatherBool weatherBool2 = new WeatherBool();
+
+        weatherBool2.param1 = "apparentTemperature";
+        weatherBool2.operator1 = "<";
+        weatherBool2.value1 = 10;
+        weatherBool2.param2 = "windSpeed";
+        weatherBool2.operator2 = ">";
+        weatherBool2.value2 = 15;
+
+        weatherBools.add(weatherBool2);
+
+        //3
+        WeatherBool weatherBool3 = new WeatherBool();
+
+        weatherBool3.param1 = "precipIntensity";
+        weatherBool3.operator1 = ">";
+        weatherBool3.value1 = 0.3;
+        weatherBool3.param2 = "precipProbability";
+        weatherBool3.operator2 = ">";
+        weatherBool3.value2 = 0.5;
+
+        weatherBools.add(weatherBool3);
+
+        //4
+        WeatherBool weatherBool4 = new WeatherBool();
+
+        weatherBool4.param1 = "apparentTemperature";
+        weatherBool4.operator1 = "<";
+        weatherBool4.value1 = 5;
+
+        weatherBools.add(weatherBool4);
+
+        //5
+        WeatherBool weatherBool5 = new WeatherBool();
+
+        weatherBool5.param1 = "apparentTemperature";
+        weatherBool5.operator1 = ">";
+        weatherBool5.value1 = 100;
+
+        weatherBools.add(weatherBool5);
+
+        //6
+        WeatherBool weatherBool6 = new WeatherBool();
+
+        weatherBool6.param1 = "windSpeed";
+        weatherBool6.operator1 = ">";
+        weatherBool6.value1 = 20;
+
+        weatherBools.add(weatherBool6);
     }
 }
