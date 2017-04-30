@@ -33,18 +33,25 @@ public class PreferenceActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        final View createView = (View) findViewById(R.id.create_panel);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.addBool);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e(LOG_TAG, "add clicked" +
-                        "");
+                Log.e(LOG_TAG, "add clicked");
+
+                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) createView.getLayoutParams();
+                params.height = 900;
+                createView.setLayoutParams(params);
+
+                createView.setVisibility(View.VISIBLE);
+                createView.animate().translationY(-350);
             }
         });
     }
 
     public void updateTable(){
-//        SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences prefs = getSharedPreferences(PREFERENCE_NAME, MODE_MULTI_PROCESS);
 
         TableLayout table = (TableLayout) findViewById(R.id.pref_table);
