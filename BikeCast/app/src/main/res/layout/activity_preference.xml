@@ -36,7 +36,7 @@
             android:layout_height="fill_parent"
             android:scrollbars="none"
             android:layout_weight="1"
-            android:paddingTop="70dp">
+            android:paddingTop="10dp">
 
             <TableLayout
                 android:layout_width="match_parent"
@@ -50,20 +50,45 @@
             </TableLayout>
         </ScrollView>
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/create_panel"
             android:layout_width="350dp"
             android:layout_height="1dp"
             android:layout_gravity="center_horizontal"
-            android:background="#fcc"
+            android:background="#0e157b"
             android:visibility="invisible"
-            android:elevation="5dp">
+            android:elevation="5dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/ifText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:text="IF"
+                android:textAlignment="center"
+                android:textSize="25dp"
+                android:gravity="top"/>
+
+            <TextView
+                android:id="@+id/dontbike"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:text="Don't Bike"
+                android:textAlignment="center"
+                android:textSize="25dp"
+                android:gravity="bottom"/>
 
             <Button
-                android:layout_width="wrap_content"
+                android:id="@+id/saveBool"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/app_name" />
-        </RelativeLayout>
+                android:text="Save"
+                android:textAlignment="center"
+                android:layout_gravity="center"
+                />
+        </LinearLayout>
 
     </LinearLayout>
 

@@ -2,20 +2,17 @@ package agbytech.com.bikecast;
 
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-
-import java.text.DateFormat;
-import java.util.Date;
 
 /**
  * Created by Anthony-Parkour on 6/16/16.
@@ -49,6 +46,17 @@ public class PreferenceActivity extends AppCompatActivity {
                 createView.animate().translationY(-350);
             }
         });
+
+        Button saveButt = (Button) findViewById(R.id.saveBool);
+        saveButt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e(LOG_TAG, "save");
+                saveBool("Hot and Humid", "apparentTemperature", ">", 90, "humidity", ">", 0.9);
+            }
+        });
+
+        updateTable();
     }
 
     public void updateTable(){
@@ -68,15 +76,15 @@ public class PreferenceActivity extends AppCompatActivity {
             int revNum = boolNum + 1 - i;
 
             String nameString = prefs.getString("name"+revNum, null);
-            String addString = prefs.getString("add"+revNum, null);
-            String catString = prefs.getString("cat"+revNum, null);
-            String cat2String = prefs.getString("cat2"+revNum, null);
-            String distString = prefs.getString("dist"+revNum, null);
-            String locString = prefs.getString("loc"+revNum, null);
-            String timeString = prefs.getString("time"+revNum, null);
+            String param1String = prefs.getString("1param"+revNum, null);
+            String operator1String = prefs.getString("1operator"+revNum, null);
+            String value1String = prefs.getString("1value"+revNum, null);
+            String param2String = prefs.getString("2param"+revNum, null);
+            String operator2String = prefs.getString("2operator"+revNum, null);
+            String value2String = prefs.getString("2value"+revNum, null);
 
             TableRow row = new TableRow(this);
-            TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT,TableRow.LayoutParams.WRAP_CONTENT);
+            TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT,TableRow.LayoutParams.WRAP_CONTENT);
 
             LinearLayout LL = new LinearLayout(this);
             LL.setOrientation(LinearLayout.VERTICAL);
@@ -86,40 +94,64 @@ public class PreferenceActivity extends AppCompatActivity {
 
             TextView name = new TextView(this);
             name.setText(nameString);
+            name.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             name.setPadding(5, 5, 0, 0);
             name.setLayoutParams(layoutParams);
 
-            TextView address = new TextView(this);
-            address.setText(addString);
-            address.setPadding(5, 5, 0, 0);
-            address.setLayoutParams(layoutParams);
+//            TextView param1 = new TextView(this);
+//            param1.setText(param1String);
+//            param1.setPadding(5, 5, 0, 0);
+//            param1.setLayoutParams(layoutParams);
+//
+//            TextView operator1 = new TextView(this);
+//            operator1.setText(operator1String);
+//            operator1.setPadding(5, 5, 0, 0);
+//            operator1.setLayoutParams(layoutParams);
 
-            TextView categories = new TextView(this);
-            categories.setText("Categories: " + catString + ", " + cat2String);
-            categories.setPadding(5, 5, 0, 0);
-            categories.setLayoutParams(layoutParams);
+            TextView line1 = new TextView(this);
+            line1.setText("If " + param1String + " " + operator1String + " " + value1String);
+            line1.setPadding(5, 5, 0, 0);
+            line1.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            line1.setLayoutParams(layoutParams);
 
-            TextView userLocation = new TextView(this);
-            userLocation.setText("User Location: " + locString);
-            userLocation.setPadding(5, 5, 0, 0);
-            userLocation.setLayoutParams(layoutParams);
+            TextView and = new TextView(this);
+            and.setText("AND");
+            and.setPadding(5, 5, 0, 0);
+            and.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            and.setLayoutParams(layoutParams);
 
-            TextView distance = new TextView(this);
-            distance.setText("Distance from Venue: " + distString);
-            distance.setPadding(5, 5, 0, 0);
-            distance.setLayoutParams(layoutParams);
+            TextView line2 = new TextView(this);
+            line2.setText("If " + param2String + " " + operator2String + " " + value2String);
+            line2.setPadding(5, 5, 0, 0);
+            line2.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            line2.setLayoutParams(layoutParams);
 
-            TextView time = new TextView(this);
-            time.setText("Time: " + timeString);
-            time.setPadding(5, 5, 0, 0);
-            time.setLayoutParams(layoutParams);
+//            TextView param2 = new TextView(this);
+//            param2.setText(param2String);
+//            param2.setPadding(5, 5, 0, 0);
+//            param2.setLayoutParams(layoutParams);
+//
+//            TextView operator2 = new TextView(this);
+//            operator2.setText(operator2String);
+//            operator2.setPadding(5, 5, 0, 0);
+//            operator2.setLayoutParams(layoutParams);
+//
+//            TextView value2 = new TextView(this);
+//            value2.setText(value2String);
+//            value2.setPadding(5, 5, 0, 0);
+//            value2.setLayoutParams(layoutParams);
 
             LL.addView(name);
-            LL.addView(address);
-            LL.addView(categories);
-            LL.addView(userLocation);
-            LL.addView(distance);
-            LL.addView(time);
+//            LL.addView(param1);
+//            LL.addView(operator1);
+            LL.addView(line1);
+
+            if(!param2String.equals("")){
+                LL.addView(and);
+                LL.addView(line2);
+            }
+
+//            LL.addView(value2);
 
             row.addView(LL);
 
@@ -134,26 +166,38 @@ public class PreferenceActivity extends AppCompatActivity {
         }
     }
 
-    public void saveVenues(String name, String add, String cat1, String cat2, double dist, Location userloc){
+    public void saveBool(String name, String param1, String operator1, double val1, String param2, String operator2, double val2){
         SharedPreferences prefs = getSharedPreferences(PREFERENCE_NAME, MODE_MULTI_PROCESS);
 
         SharedPreferences.Editor editor = prefs.edit();
 
-        int venueNumber = prefs.getInt("arraySize", 0);
-        venueNumber++;
+        int boolNumber = prefs.getInt("arraySize", 0);
+        boolNumber++;
 
-        editor.putInt("arraySize", venueNumber);
+        editor.putInt("arraySize", boolNumber);
 
-        String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-
-        editor.putString("name" + venueNumber, name);
-        editor.putString("add" + venueNumber, add);
-        editor.putString("cat" + venueNumber, cat1);
-        editor.putString("cat2" + venueNumber, cat2);
-        editor.putString("dist" + venueNumber, String.valueOf(dist));
-        editor.putString("loc" + venueNumber, "" + userloc.getLatitude() + ", " + userloc.getLongitude());
-        editor.putString("time" + venueNumber, currentDateTimeString);
+        editor.putString("name" + boolNumber, name);
+        editor.putString("1param" + boolNumber, param1);
+        editor.putString("1operator" + boolNumber, operator1);
+        editor.putString("1value" + boolNumber, String.valueOf(val1));
+        editor.putString("2param" + boolNumber, param2);
+        editor.putString("2operator" + boolNumber, operator2);
+        editor.putString("2value" + boolNumber, String.valueOf(val2));
 
         editor.commit();
+
+        updateTable();
+        hideAddScreen();
+    }
+
+    public void hideAddScreen(){
+        final View addView = (View) findViewById(R.id.create_panel);
+
+        addView.animate().translationY(350);
+        addView.setVisibility(View.INVISIBLE);
+
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) addView.getLayoutParams();
+        params.height = 1;
+        addView.setLayoutParams(params);
     }
 }
