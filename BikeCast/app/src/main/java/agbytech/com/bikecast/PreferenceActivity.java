@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -24,7 +25,7 @@ public class PreferenceActivity extends AppCompatActivity {
     private static final String PREFERENCE_NAME = "boolPreferences";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preference);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -36,23 +37,50 @@ public class PreferenceActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e(LOG_TAG, "add clicked");
-
                 LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) createView.getLayoutParams();
-                params.height = 900;
+                params.height = 650;
                 createView.setLayoutParams(params);
 
                 createView.setVisibility(View.VISIBLE);
-                createView.animate().translationY(-350);
+                createView.animate().translationY(-1300);
             }
         });
 
-        Button saveButt = (Button) findViewById(R.id.saveBool);
+        final Button saveButt = (Button) findViewById(R.id.saveBool);
+        saveButt.animate().translationX(saveButt.getWidth());
+        saveButt.animate().translationY(-saveButt.getHeight());
+
         saveButt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.e(LOG_TAG, "save");
-                saveBool("Hot and Humid", "apparentTemperature", ">", 90, "humidity", ">", 0.9);
+
+                //get text values
+                EditText param = (EditText) findViewById(R.id.parameter);
+                EditText operand = (EditText) findViewById(R.id.operand);
+                EditText value = (EditText) findViewById(R.id.value);
+
+                Log.e(LOG_TAG, "Test values: param -" + param.getText() + "\noperand - " + operand.getText() + "\nvalue - " + value.getText());
+
+//                saveBool("Hot and Humid", "apparentTemperature", ">", 90, "humidity", ">", 0.9);
+            }
+        });
+
+        final Button nextButt = (Button) findViewById(R.id.next);
+        nextButt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e(LOG_TAG, "next");
+
+                //get text values
+                EditText param = (EditText) findViewById(R.id.parameter);
+                EditText operand = (EditText) findViewById(R.id.operand);
+                EditText value = (EditText) findViewById(R.id.value);
+
+                Log.e(LOG_TAG, "Test values: param -" + param.getText() + "\noperand - " + operand.getText() + "\nvalue - " + value.getText());
+
+                nextButt.animate().translationX(-nextButt.getWidth());
+                saveButt.animate().translationX(-saveButt.getWidth());
             }
         });
 
@@ -168,7 +196,6 @@ public class PreferenceActivity extends AppCompatActivity {
 
     public void saveBool(String name, String param1, String operator1, double val1, String param2, String operator2, double val2){
         SharedPreferences prefs = getSharedPreferences(PREFERENCE_NAME, MODE_MULTI_PROCESS);
-
         SharedPreferences.Editor editor = prefs.edit();
 
         int boolNumber = prefs.getInt("arraySize", 0);
