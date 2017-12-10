@@ -1,16 +1,22 @@
 package agbytech.com.bikecast;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import com.mapbox.mapboxsdk.Mapbox;
@@ -53,13 +59,19 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//
-
         bikeResult = (TextView) findViewById(R.id.bikeResponse);
 
         Mapbox.getInstance(this, MAPBOX_TOKEN);
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getCurrentLocation();
+            }
+        });
     }
 
     @Override
@@ -68,14 +80,14 @@ public class MainActivity extends AppCompatActivity {
         mapView.onStart();
         setBools();
 
-//        if (ContextCompat.checkSelfPermission(this,
-//                Manifest.permission.ACCESS_FINE_LOCATION)
-//                != PackageManager.PERMISSION_GRANTED) {
-//
-//            ActivityCompat.requestPermissions(this,
-//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//                    REQUEST_CODE_PERMISSION);
-//        }
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_CODE_PERMISSION);
+        }
 
         forecast.forecastListener.setOnForecastChangeListener(new OnForecastChangeListener() {
 
@@ -95,22 +107,22 @@ public class MainActivity extends AppCompatActivity {
 
                 bikeResult = ((TextView) findViewById(R.id.bikeResponse));
 
-                if(okToBike(hour1)){
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            bikeResult.setText("Yep");
-                        }
-                    });
-                }else{
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            bikeResult.setText("Nope");
-                        }
-                    });
-                }
+//                if(okToBike(hour1)){
+//                    runOnUiThread(new Runnable() {
+//
+//                        @Override
+//                        public void run() {
+//                            bikeResult.setText("Yep");
+//                        }
+//                    });
+//                }else{
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            bikeResult.setText("Nope");
+//                        }
+//                    });
+//                }
 
             }
         });
@@ -131,22 +143,22 @@ public class MainActivity extends AppCompatActivity {
 
                 bikeResult = ((TextView) findViewById(R.id.bikeResponse));
 
-                if(okToBike(hour1)){
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            bikeResult.setText("Yep");
-                        }
-                    });
-                }else{
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            bikeResult.setText("Nope");
-                        }
-                    });
-                }
+//                if(okToBike(hour1)){
+//                    runOnUiThread(new Runnable() {
+//
+//                        @Override
+//                        public void run() {
+//                            bikeResult.setText("Yep");
+//                        }
+//                    });
+//                }else{
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            bikeResult.setText("Nope");
+//                        }
+//                    });
+//                }
 
             }
         });
@@ -167,22 +179,22 @@ public class MainActivity extends AppCompatActivity {
 
                 bikeResult = ((TextView) findViewById(R.id.bikeResponse));
 
-                if(okToBike(hour1)){
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            bikeResult.setText("Yep");
-                        }
-                    });
-                }else{
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            bikeResult.setText("Nope");
-                        }
-                    });
-                }
+//                if(okToBike(hour1)){
+//                    runOnUiThread(new Runnable() {
+//
+//                        @Override
+//                        public void run() {
+//                            bikeResult.setText("Yep");
+//                        }
+//                    });
+//                }else{
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            bikeResult.setText("Nope");
+//                        }
+//                    });
+//                }
 
             }
         });
@@ -260,8 +272,8 @@ public class MainActivity extends AppCompatActivity {
 //                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
 //                    REQUEST_CODE_PERMISSION);
 //        }
-//        gpsLocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 0, burstListener);
-//        netLocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 0, burstListener);
+        gpsLocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 0, burstListener);
+        netLocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 0, burstListener);
     }
 
     private LocationListener burstListener = new LocationListener() {
