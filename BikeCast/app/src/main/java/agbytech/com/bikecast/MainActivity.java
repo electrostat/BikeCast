@@ -6,14 +6,15 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
+
+import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.maps.MapView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,11 +37,14 @@ public class MainActivity extends AppCompatActivity {
     private LocationManager netLocManager;
 
     private static final int REQUEST_CODE_PERMISSION = 2;
-
     public Forecast forecast = new Forecast();
     private TextView bikeResult;
-
     private ArrayList <WeatherBool> weatherBools = new ArrayList();
+
+    //map
+    static Config config = new Config();
+    private static String MAPBOX_TOKEN = config.mapbox_token;
+    private MapView mapView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,21 +53,19 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getCurrentLocation();
-            }
-        });
+//
 
         bikeResult = (TextView) findViewById(R.id.bikeResponse);
+
+        Mapbox.getInstance(this, MAPBOX_TOKEN);
+        mapView = (MapView) findViewById(R.id.mapView);
+        mapView.onCreate(savedInstanceState);
     }
 
     @Override
     protected void onStart(){
         super.onStart();
-
+        mapView.onStart();
         setBools();
 
 //        if (ContextCompat.checkSelfPermission(this,
@@ -258,8 +260,8 @@ public class MainActivity extends AppCompatActivity {
 //                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
 //                    REQUEST_CODE_PERMISSION);
 //        }
-        gpsLocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 0, burstListener);
-        netLocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 0, burstListener);
+//        gpsLocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 0, burstListener);
+//        netLocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 0, burstListener);
     }
 
     private LocationListener burstListener = new LocationListener() {
@@ -392,5 +394,41 @@ public class MainActivity extends AppCompatActivity {
         weatherBool6.value1 = 20;
 
         weatherBools.add(weatherBool6);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mapView.onStop();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
     }
 }

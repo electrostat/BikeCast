@@ -20,9 +20,6 @@ import agbytech.com.bikecast.Listeners.EveningListener;
 import agbytech.com.bikecast.Listeners.ForecastListener;
 import agbytech.com.bikecast.Listeners.MorningListener;
 
-/**
- * Created by Anthony-Parkour on 5/29/16.
- */
 public class Forecast {
     private final String LOG_TAG="BikeCast";
 
