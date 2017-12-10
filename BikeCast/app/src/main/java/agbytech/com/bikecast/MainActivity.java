@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -20,7 +21,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     static Config config = new Config();
     private static String MAPBOX_TOKEN = config.mapbox_token;
     private MapView mapView;
+    private MapboxMap map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +71,13 @@ public class MainActivity extends AppCompatActivity {
         Mapbox.getInstance(this, MAPBOX_TOKEN);
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
+
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(MapboxMap mapboxMap) {
+                map = mapboxMap;
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -284,6 +298,8 @@ public class MainActivity extends AppCompatActivity {
 
             forecast.getCurrent(location);
             callCommute(location);
+
+            updateMapCenter(location);
         }
 
         public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -406,6 +422,17 @@ public class MainActivity extends AppCompatActivity {
         weatherBool6.value1 = 20;
 
         weatherBools.add(weatherBool6);
+    }
+
+    private void updateMapCenter(Location location){
+        CameraPosition position = new CameraPosition.Builder()
+          .target(new LatLng(location.getLatitude(), location.getLongitude())) // Sets the new camera position
+          .zoom(16)
+          .build();
+
+        map.setMyLocationEnabled(true);
+        map.animateCamera(CameraUpdateFactory
+          .newCameraPosition(position), 5000);
     }
 
     @Override
