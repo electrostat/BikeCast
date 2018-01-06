@@ -2,13 +2,13 @@ package agbytech.com.bikecast;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -76,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onMapReady(MapboxMap mapboxMap) {
                 map = mapboxMap;
+                Location lastLocation = retrieveLastLocation();
+                updateMapCenter(lastLocation);
             }
         });
 
@@ -101,6 +103,8 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_CODE_PERMISSION);
+        }else {
+            getCurrentLocation();
         }
 
         forecast.forecastListener.setOnForecastChangeListener(new OnForecastChangeListener() {
@@ -278,14 +282,6 @@ public class MainActivity extends AppCompatActivity {
         netLocManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
         netLocManager.getBestProvider(criteria, true);
 
-//        if (ContextCompat.checkSelfPermission(this,
-//                Manifest.permission.ACCESS_FINE_LOCATION)
-//                != PackageManager.PERMISSION_GRANTED) {
-//
-//            ActivityCompat.requestPermissions(this,
-//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//                    REQUEST_CODE_PERMISSION);
-//        }
         gpsLocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 0, burstListener);
         netLocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 0, burstListener);
     }
@@ -300,6 +296,8 @@ public class MainActivity extends AppCompatActivity {
             callCommute(location);
 
             updateMapCenter(location);
+
+            retainLastLocation(location);
         }
 
         public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -425,14 +423,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateMapCenter(Location location){
-        CameraPosition position = new CameraPosition.Builder()
-          .target(new LatLng(location.getLatitude(), location.getLongitude())) // Sets the new camera position
-          .zoom(16)
-          .build();
 
-        map.setMyLocationEnabled(true);
-        map.animateCamera(CameraUpdateFactory
-          .newCameraPosition(position), 5000);
+        if(location != null) {
+            CameraPosition position = new CameraPosition.Builder()
+              .target(new LatLng(location.getLatitude(), location.getLongitude()))
+              .zoom(16)
+              .build();
+
+            if(map != null) {
+                map.setMyLocationEnabled(true);
+                map.animateCamera(CameraUpdateFactory
+                  .newCameraPosition(position), 5000);
+            }
+        }
     }
 
     @Override
@@ -469,5 +472,33 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
+    }
+
+    private void retainLastLocation(Location location){
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("BikeCast", 0);
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.putLong("lastLat", Double.doubleToRawLongBits(location.getLatitude()));
+        editor.putLong("lastLon", Double.doubleToRawLongBits(location.getLongitude()));
+        editor.putString("lastProvider", location.getProvider());
+        editor.commit();
+    }
+
+    private Location retrieveLastLocation(){
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("BikeCast", 0);
+
+        String lastProvider = pref.getString("lastProvider", null);
+        long lastLat = pref.getLong("lastLat", 0);
+        long lastLon = pref.getLong("lastLon", 0);
+
+        if(lastProvider == null || lastLat == 0 || lastLon == 0){
+            return null;
+        }
+
+        Location lastLocation = new Location(lastProvider);
+        lastLocation.setLatitude(Double.longBitsToDouble(lastLat));
+        lastLocation.setLongitude(Double.longBitsToDouble(lastLon));
+
+        return lastLocation;
     }
 }
