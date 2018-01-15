@@ -54,6 +54,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 getCurrentLocation();
+
+//                String[] invitees = new String[] {"Beth,Adam,4,2", "Cass,Adam,3,4", "Dole,Adam,2,3", "Evan,Beth,3,1", "Fury,Evan,2,2", "Greg,Dole,6,2", "Hugh,Cass,4,4", "Ivan,Cass,6,4", "Juan,Cass,3,1", "Kale,Ivan,1,6", "Leon,Ivan,2,5", "Mark,Ivan,1,6"};
+//
+//                ArrayList<String> doNotInviteList = doNotInvite(invitees);
+//
+//                Log.e(LOG_TAG, "Do not invite: " + String.valueOf(doNotInviteList));
             }
         });
 
@@ -392,5 +398,53 @@ public class MainActivity extends AppCompatActivity {
         weatherBool6.value1 = 20;
 
         weatherBools.add(weatherBool6);
+    }
+
+    private ArrayList<String> doNotInvite(String[] inviteees){
+//        Log.e(LOG_TAG, Arrays.toString(inviteees));
+
+        ArrayList<String> noInviteList = new ArrayList<String>();
+        Invitee[] reviewedInvitees = new Invitee[inviteees.length];
+
+        for(int i = inviteees.length - 1; i >= 0; i--){
+            String[] thisInviteeString = inviteees[i].split(",");
+
+            Invitee thisInvitee = new Invitee(thisInviteeString);
+
+            int netCandy = thisInvitee.candyBrought - thisInvitee.candyCosumed;
+
+            for(int a = 0; a < inviteees.length - 1 - i; a++){
+                Invitee reviewInvitee = reviewedInvitees[a];
+
+                if(reviewInvitee.invitor.equals(thisInvitee.guest)){
+                    netCandy = netCandy + reviewInvitee.netCandy;
+                }
+            }
+
+            thisInvitee.netCandy = netCandy;
+            reviewedInvitees[inviteees.length - 1 - i] = thisInvitee;
+
+            if(netCandy < 0){
+                noInviteList.add(thisInvitee.guest);
+            }
+        }
+
+        return noInviteList;
+    }
+}
+
+class Invitee {
+    //initialize bool doubles
+    String guest;
+    String invitor;
+    int candyBrought;
+    int candyCosumed;
+    int netCandy;
+
+    public Invitee(String[] input) {
+        guest = input[0];
+        invitor = input[1];
+        candyBrought = Integer.parseInt(input[2]);
+        candyCosumed = Integer.parseInt(input[3]);
     }
 }

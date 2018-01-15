@@ -15,9 +15,6 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-/**
- * Created by Anthony-Parkour on 6/16/16.
- */
 public class PreferenceActivity extends AppCompatActivity {
 
     private final String LOG_TAG="BikeCast";
