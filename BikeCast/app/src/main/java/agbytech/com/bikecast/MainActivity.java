@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
             public void onMapReady(MapboxMap mapboxMap) {
                 map = mapboxMap;
                 Location lastLocation = retrieveLastLocation();
-                updateMapCenter(lastLocation);
+                updateMapCenter(lastLocation, 13);
             }
         });
 
@@ -85,7 +85,10 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getCurrentLocation();
+//                getCurrentLocation();
+
+                Intent i = new Intent(getApplicationContext(), PreferenceActivity.class);
+                startActivity(i);
 
 //                String[] invitees = new String[] {"Beth,Adam,4,2", "Cass,Adam,3,4", "Dole,Adam,2,3", "Evan,Beth,3,1", "Fury,Evan,2,2", "Greg,Dole,6,2", "Hugh,Cass,4,4", "Ivan,Cass,6,4", "Juan,Cass,3,1", "Kale,Ivan,1,6", "Leon,Ivan,2,5", "Mark,Ivan,1,6"};
 //
@@ -301,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
             forecast.getCurrent(location);
             callCommute(location);
 
-            updateMapCenter(location);
+            updateMapCenter(location, 13);
 
             retainLastLocation(location);
         }
@@ -428,16 +431,15 @@ public class MainActivity extends AppCompatActivity {
         weatherBools.add(weatherBool6);
     }
   
-  private void updateMapCenter(Location location){
+  private void updateMapCenter(Location location, int zoomLevel){
 
         if(location != null) {
             CameraPosition position = new CameraPosition.Builder()
               .target(new LatLng(location.getLatitude(), location.getLongitude()))
-              .zoom(16)
+              .zoom(zoomLevel)
               .build();
 
             if(map != null) {
-                map.setMyLocationEnabled(true);
                 map.animateCamera(CameraUpdateFactory
                   .newCameraPosition(position), 5000);
             }
