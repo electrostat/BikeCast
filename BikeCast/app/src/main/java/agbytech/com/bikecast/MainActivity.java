@@ -1,12 +1,17 @@
 package agbytech.com.bikecast;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,6 +19,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.maps.MapView;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,11 +49,15 @@ public class MainActivity extends AppCompatActivity {
     private LocationManager netLocManager;
 
     private static final int REQUEST_CODE_PERMISSION = 2;
-
     public Forecast forecast = new Forecast();
     private TextView bikeResult;
-
     private ArrayList <WeatherBool> weatherBools = new ArrayList();
+
+    //map
+    static Config config = new Config();
+    private static String MAPBOX_TOKEN = config.mapbox_token;
+    private MapView mapView;
+    private MapboxMap map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +65,21 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        bikeResult = (TextView) findViewById(R.id.bikeResponse);
+
+        Mapbox.getInstance(this, MAPBOX_TOKEN);
+        mapView = (MapView) findViewById(R.id.mapView);
+        mapView.onCreate(savedInstanceState);
+
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(MapboxMap mapboxMap) {
+                map = mapboxMap;
+                Location lastLocation = retrieveLastLocation();
+                updateMapCenter(lastLocation);
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -62,24 +94,24 @@ public class MainActivity extends AppCompatActivity {
 //                Log.e(LOG_TAG, "Do not invite: " + String.valueOf(doNotInviteList));
             }
         });
-
-        bikeResult = (TextView) findViewById(R.id.bikeResponse);
     }
 
     @Override
     protected void onStart(){
         super.onStart();
-
+        mapView.onStart();
         setBools();
 
-//        if (ContextCompat.checkSelfPermission(this,
-//                Manifest.permission.ACCESS_FINE_LOCATION)
-//                != PackageManager.PERMISSION_GRANTED) {
-//
-//            ActivityCompat.requestPermissions(this,
-//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//                    REQUEST_CODE_PERMISSION);
-//        }
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_CODE_PERMISSION);
+        }else {
+            getCurrentLocation();
+        }
 
         forecast.forecastListener.setOnForecastChangeListener(new OnForecastChangeListener() {
 
@@ -99,22 +131,22 @@ public class MainActivity extends AppCompatActivity {
 
                 bikeResult = ((TextView) findViewById(R.id.bikeResponse));
 
-                if(okToBike(hour1)){
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            bikeResult.setText("Yep");
-                        }
-                    });
-                }else{
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            bikeResult.setText("Nope");
-                        }
-                    });
-                }
+//                if(okToBike(hour1)){
+//                    runOnUiThread(new Runnable() {
+//
+//                        @Override
+//                        public void run() {
+//                            bikeResult.setText("Yep");
+//                        }
+//                    });
+//                }else{
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            bikeResult.setText("Nope");
+//                        }
+//                    });
+//                }
 
             }
         });
@@ -135,22 +167,22 @@ public class MainActivity extends AppCompatActivity {
 
                 bikeResult = ((TextView) findViewById(R.id.bikeResponse));
 
-                if(okToBike(hour1)){
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            bikeResult.setText("Yep");
-                        }
-                    });
-                }else{
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            bikeResult.setText("Nope");
-                        }
-                    });
-                }
+//                if(okToBike(hour1)){
+//                    runOnUiThread(new Runnable() {
+//
+//                        @Override
+//                        public void run() {
+//                            bikeResult.setText("Yep");
+//                        }
+//                    });
+//                }else{
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            bikeResult.setText("Nope");
+//                        }
+//                    });
+//                }
 
             }
         });
@@ -171,22 +203,22 @@ public class MainActivity extends AppCompatActivity {
 
                 bikeResult = ((TextView) findViewById(R.id.bikeResponse));
 
-                if(okToBike(hour1)){
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            bikeResult.setText("Yep");
-                        }
-                    });
-                }else{
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            bikeResult.setText("Nope");
-                        }
-                    });
-                }
+//                if(okToBike(hour1)){
+//                    runOnUiThread(new Runnable() {
+//
+//                        @Override
+//                        public void run() {
+//                            bikeResult.setText("Yep");
+//                        }
+//                    });
+//                }else{
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            bikeResult.setText("Nope");
+//                        }
+//                    });
+//                }
 
             }
         });
@@ -256,14 +288,6 @@ public class MainActivity extends AppCompatActivity {
         netLocManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
         netLocManager.getBestProvider(criteria, true);
 
-//        if (ContextCompat.checkSelfPermission(this,
-//                Manifest.permission.ACCESS_FINE_LOCATION)
-//                != PackageManager.PERMISSION_GRANTED) {
-//
-//            ActivityCompat.requestPermissions(this,
-//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-//                    REQUEST_CODE_PERMISSION);
-//        }
         gpsLocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 0, burstListener);
         netLocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 0, burstListener);
     }
@@ -276,6 +300,10 @@ public class MainActivity extends AppCompatActivity {
 
             forecast.getCurrent(location);
             callCommute(location);
+
+            updateMapCenter(location);
+
+            retainLastLocation(location);
         }
 
         public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -398,6 +426,86 @@ public class MainActivity extends AppCompatActivity {
         weatherBool6.value1 = 20;
 
         weatherBools.add(weatherBool6);
+    }
+  
+  private void updateMapCenter(Location location){
+
+        if(location != null) {
+            CameraPosition position = new CameraPosition.Builder()
+              .target(new LatLng(location.getLatitude(), location.getLongitude()))
+              .zoom(16)
+              .build();
+
+            if(map != null) {
+                map.setMyLocationEnabled(true);
+                map.animateCamera(CameraUpdateFactory
+                  .newCameraPosition(position), 5000);
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mapView.onStop();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
+    }
+
+    private void retainLastLocation(Location location){
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("BikeCast", 0);
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.putLong("lastLat", Double.doubleToRawLongBits(location.getLatitude()));
+        editor.putLong("lastLon", Double.doubleToRawLongBits(location.getLongitude()));
+        editor.putString("lastProvider", location.getProvider());
+        editor.commit();
+    }
+
+    private Location retrieveLastLocation(){
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("BikeCast", 0);
+
+        String lastProvider = pref.getString("lastProvider", null);
+        long lastLat = pref.getLong("lastLat", 0);
+        long lastLon = pref.getLong("lastLon", 0);
+
+        if(lastProvider == null || lastLat == 0 || lastLon == 0){
+            return null;
+        }
+
+        Location lastLocation = new Location(lastProvider);
+        lastLocation.setLatitude(Double.longBitsToDouble(lastLat));
+        lastLocation.setLongitude(Double.longBitsToDouble(lastLon));
+
+        return lastLocation;
     }
 
     private ArrayList<String> doNotInvite(String[] inviteees){
