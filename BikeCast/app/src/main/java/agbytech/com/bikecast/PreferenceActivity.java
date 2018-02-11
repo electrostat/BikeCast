@@ -8,10 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -28,58 +25,58 @@ public class PreferenceActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final View createView = (View) findViewById(R.id.create_panel);
+//        final View createView = (View) findViewById(R.id.create_panel);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.addBool);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) createView.getLayoutParams();
-                params.height = 650;
-                createView.setLayoutParams(params);
-
-                createView.setVisibility(View.VISIBLE);
-                createView.animate().translationY(-1300);
+//                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) createView.getLayoutParams();
+//                params.height = 650;
+//                createView.setLayoutParams(params);
+//
+//                createView.setVisibility(View.VISIBLE);
+//                createView.animate().translationY(-1300);
             }
         });
 
-        final Button saveButt = (Button) findViewById(R.id.saveBool);
-        saveButt.animate().translationX(saveButt.getWidth());
-        saveButt.animate().translationY(-saveButt.getHeight());
+//        final Button saveButt = (Button) findViewById(R.id.saveBool);
+//        saveButt.animate().translationX(saveButt.getWidth());
+//        saveButt.animate().translationY(-saveButt.getHeight());
+//
+//        saveButt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Log.e(LOG_TAG, "save");
+//
+//                //get text values
+//                EditText param = (EditText) findViewById(R.id.parameter);
+//                EditText operand = (EditText) findViewById(R.id.operand);
+//                EditText value = (EditText) findViewById(R.id.value);
+//
+//                Log.e(LOG_TAG, "Test values: param -" + param.getText() + "\noperand - " + operand.getText() + "\nvalue - " + value.getText());
+//
+////                saveBool("Hot and Humid", "apparentTemperature", ">", 90, "humidity", ">", 0.9);
+//            }
+//        });
 
-        saveButt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.e(LOG_TAG, "save");
-
-                //get text values
-                EditText param = (EditText) findViewById(R.id.parameter);
-                EditText operand = (EditText) findViewById(R.id.operand);
-                EditText value = (EditText) findViewById(R.id.value);
-
-                Log.e(LOG_TAG, "Test values: param -" + param.getText() + "\noperand - " + operand.getText() + "\nvalue - " + value.getText());
-
-//                saveBool("Hot and Humid", "apparentTemperature", ">", 90, "humidity", ">", 0.9);
-            }
-        });
-
-        final Button nextButt = (Button) findViewById(R.id.next);
-        nextButt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.e(LOG_TAG, "next");
-
-                //get text values
-                EditText param = (EditText) findViewById(R.id.parameter);
-                EditText operand = (EditText) findViewById(R.id.operand);
-                EditText value = (EditText) findViewById(R.id.value);
-
-                Log.e(LOG_TAG, "Test values: param -" + param.getText() + "\noperand - " + operand.getText() + "\nvalue - " + value.getText());
-
-                nextButt.animate().translationX(-nextButt.getWidth());
-                saveButt.animate().translationX(-saveButt.getWidth());
-            }
-        });
+//        final Button nextButt = (Button) findViewById(R.id.next);
+//        nextButt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Log.e(LOG_TAG, "next");
+//
+//                //get text values
+//                EditText param = (EditText) findViewById(R.id.parameter);
+//                EditText operand = (EditText) findViewById(R.id.operand);
+//                EditText value = (EditText) findViewById(R.id.value);
+//
+//                Log.e(LOG_TAG, "Test values: param -" + param.getText() + "\noperand - " + operand.getText() + "\nvalue - " + value.getText());
+//
+//                nextButt.animate().translationX(-nextButt.getWidth());
+//                saveButt.animate().translationX(-saveButt.getWidth());
+//            }
+//        });
 
         updateTable();
     }
@@ -87,9 +84,9 @@ public class PreferenceActivity extends AppCompatActivity {
     public void updateTable(){
         SharedPreferences prefs = getSharedPreferences(PREFERENCE_NAME, MODE_MULTI_PROCESS);
 
-        TableLayout table = (TableLayout) findViewById(R.id.pref_table);
+//        TableLayout table = (TableLayout) findViewById(R.id.pref_table);
 
-        table.removeAllViews();
+//        table.removeAllViews();
 
         boolNum = prefs.getInt("arraySize", 0);
 
@@ -186,8 +183,8 @@ public class PreferenceActivity extends AppCompatActivity {
             v.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, 1));
             v.setBackgroundColor(Color.rgb(51, 51, 51));
 
-            table.addView(row);
-            table.addView(v);
+//            table.addView(row);
+//            table.addView(v);
         }
     }
 
@@ -215,13 +212,13 @@ public class PreferenceActivity extends AppCompatActivity {
     }
 
     public void hideAddScreen(){
-        final View addView = (View) findViewById(R.id.create_panel);
-
-        addView.animate().translationY(350);
-        addView.setVisibility(View.INVISIBLE);
-
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) addView.getLayoutParams();
-        params.height = 1;
-        addView.setLayoutParams(params);
+//        final View addView = (View) findViewById(R.id.create_panel);
+//
+//        addView.animate().translationY(350);
+//        addView.setVisibility(View.INVISIBLE);
+//
+//        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) addView.getLayoutParams();
+//        params.height = 1;
+//        addView.setLayoutParams(params);
     }
 }
