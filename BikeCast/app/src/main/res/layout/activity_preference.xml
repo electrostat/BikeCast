@@ -6,10 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="agbytech.com.bikecast.PreferenceActivity">
+    tools:context="agbytech.com.bikecast.PreferenceActivity"
+    android:background="@color/colorPrimaryDark">
 
-    <android.support.design.widget.AppBarLayout android:layout_height="wrap_content"
-        android:layout_width="match_parent" android:theme="@style/AppTheme.AppBarOverlay">
+    <android.support.design.widget.AppBarLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar android:id="@+id/toolbar"
             android:layout_width="match_parent" android:layout_height="?attr/actionBarSize"
@@ -19,19 +22,276 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:id="@+id/linearLayout3">
 
         <TextView
+            android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Rain Percentage"
             android:layout_marginTop="60dp"
+            android:text="Weather Booleans"
             android:textAlignment="center"
-            android:textSize="25dp"/>
+            android:textSize="25dp"
+            android:textColor="@color/colorPrimary"/>
 
-        <SeekBar
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:scrollbars="none"
+            android:paddingTop="10dp">
+
+            <LinearLayout
+            android:id="@+id/create_panel"
             android:layout_width="match_parent"
-            android:layout_height="50dp" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:elevation="5dp"
+            android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tempText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:paddingBottom="5dp"
+                    android:text="Temperature"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="25dp"/>
+
+                <LinearLayout
+                    android:id="@+id/min_temp_setting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:elevation="5dp"
+                    android:orientation="horizontal"
+                    android:paddingBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/minTempText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="top"
+                        android:text="min"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="15dp"/>
+
+                    <SeekBar
+                        android:id="@+id/minTempSeekBar"
+                        android:layout_width="300dp"
+                        android:layout_height="25dp"
+                        android:min="0"
+                        android:max="125"
+                        android:progress="50"/>
+
+                    <TextView
+                        android:id="@+id/minTempAmt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="top"
+                        android:text="50"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="15dp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/max_temp_setting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:elevation="5dp"
+                    android:orientation="horizontal"
+                    android:paddingBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/maxTempText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="top"
+                        android:text="max"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="15dp"/>
+
+                    <SeekBar
+                        android:id="@+id/maxTempSeekBar"
+                        android:layout_width="300dp"
+                        android:layout_height="25dp"
+                        android:min="0"
+                        android:max="125"
+                        android:progress="50"/>
+
+                    <TextView
+                        android:id="@+id/maxTempAmt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="top"
+                        android:text="50"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="15dp"/>
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/windText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"
+                    android:text="Wind Speed"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="25dp"/>
+
+                <LinearLayout
+                    android:id="@+id/max_wind_setting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:elevation="5dp"
+                    android:orientation="horizontal"
+                    android:paddingBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/maxWindText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="top"
+                        android:text="max"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="15dp"/>
+
+                    <SeekBar
+                        android:id="@+id/maxWindSeekBar"
+                        android:layout_width="300dp"
+                        android:layout_height="25dp"
+                        android:max="45"
+                        android:progress="50"/>
+
+                    <TextView
+                        android:id="@+id/maxWindAmt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="top"
+                        android:text="50"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="15dp"/>
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/rainText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"
+                    android:text="Rain Chance"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="25dp"/>
+
+                <LinearLayout
+                    android:id="@+id/max_rain_setting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:elevation="5dp"
+                    android:orientation="horizontal"
+                    android:paddingBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/maxRainText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="top"
+                        android:text="max"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="15dp"/>
+
+                    <SeekBar
+                        android:id="@+id/maxRainSeekBar"
+                        android:layout_width="300dp"
+                        android:layout_height="25dp"
+                        android:max="100"
+                        android:progress="50"/>
+
+                    <TextView
+                        android:id="@+id/maxRainAmt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="top"
+                        android:text="50"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="15dp"/>
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/humidtyText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"
+                    android:text="Humidity Percentage"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="25dp"/>
+
+                <LinearLayout
+                    android:id="@+id/max_humidity_setting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:elevation="5dp"
+                    android:orientation="horizontal"
+                    android:paddingBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/maxHumidityText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="top"
+                        android:text="max"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="15dp"/>
+
+                    <SeekBar
+                        android:id="@+id/maxHumiditySeekBar"
+                        android:layout_width="300dp"
+                        android:layout_height="25dp"
+                        android:max="100"
+                        android:progress="50"/>
+
+                    <TextView
+                        android:id="@+id/maxHumidityAmt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="top"
+                        android:text="50"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="15dp"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
