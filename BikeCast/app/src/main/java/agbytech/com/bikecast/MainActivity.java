@@ -511,8 +511,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ArrayList<String> doNotInvite(String[] inviteees){
-//        Log.e(LOG_TAG, Arrays.toString(inviteees));
-
         ArrayList<String> noInviteList = new ArrayList<String>();
         Invitee[] reviewedInvitees = new Invitee[inviteees.length];
 

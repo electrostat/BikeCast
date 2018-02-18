@@ -50,7 +50,7 @@
             android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/ifText"
+                    android:id="@+id/tempText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="top"
@@ -83,7 +83,8 @@
                         android:id="@+id/minTempSeekBar"
                         android:layout_width="300dp"
                         android:layout_height="25dp"
-                        android:max="100"
+                        android:min="0"
+                        android:max="125"
                         android:progress="50"/>
 
                     <TextView
@@ -121,7 +122,8 @@
                         android:id="@+id/maxTempSeekBar"
                         android:layout_width="300dp"
                         android:layout_height="25dp"
-                        android:max="100"
+                        android:min="0"
+                        android:max="125"
                         android:progress="50"/>
 
                     <TextView
@@ -171,7 +173,7 @@
                         android:id="@+id/maxWindSeekBar"
                         android:layout_width="300dp"
                         android:layout_height="25dp"
-                        android:max="100"
+                        android:max="45"
                         android:progress="50"/>
 
                     <TextView
@@ -291,14 +293,5 @@
         </ScrollView>
 
     </LinearLayout>
-
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/addBool"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_menu_add" />
 
 </android.support.design.widget.CoordinatorLayout>
