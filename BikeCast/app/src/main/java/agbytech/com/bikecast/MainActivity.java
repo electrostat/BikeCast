@@ -1,6 +1,7 @@
 package agbytech.com.bikecast;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -33,7 +34,6 @@ import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -51,13 +51,20 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_PERMISSION = 2;
     public Forecast forecast = new Forecast();
     private TextView bikeResult;
-    private ArrayList <WeatherBool> weatherBools = new ArrayList();
 
     //map
     static Config config = new Config();
     private static String MAPBOX_TOKEN = config.mapbox_token;
     private MapView mapView;
     private MapboxMap map;
+
+    //preferences
+    private static final String PREFERENCE_NAME = "boolPreferences";
+    private int minTemp;
+    private int maxTemp;
+    private int windSpd;
+    private int rainChance;
+    private int humidity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,16 +92,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                getCurrentLocation();
-
-                Intent i = new Intent(getApplicationContext(), PreferenceActivity.class);
-                startActivity(i);
-
-//                String[] invitees = new String[] {"Beth,Adam,4,2", "Cass,Adam,3,4", "Dole,Adam,2,3", "Evan,Beth,3,1", "Fury,Evan,2,2", "Greg,Dole,6,2", "Hugh,Cass,4,4", "Ivan,Cass,6,4", "Juan,Cass,3,1", "Kale,Ivan,1,6", "Leon,Ivan,2,5", "Mark,Ivan,1,6"};
-//
-//                ArrayList<String> doNotInviteList = doNotInvite(invitees);
-//
-//                Log.e(LOG_TAG, "Do not invite: " + String.valueOf(doNotInviteList));
+                getCurrentLocation();
             }
         });
     }
@@ -103,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart(){
         super.onStart();
         mapView.onStart();
-        setBools();
+        grabCurrentStats();
 
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -120,8 +118,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onForecastChanged(JSONObject hourly) throws JSONException {
-                Log.e(LOG_TAG, "Acquired");
-
                 JSONObject hour1 = hourly;
                 long time1 = hour1.getLong("time");
 
@@ -129,27 +125,9 @@ public class MainActivity extends AppCompatActivity {
                 DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
                 String dateFormatted = formatter.format(date);
 
-                Log.e(LOG_TAG, "first hour: " + hour1);
-                Log.e(LOG_TAG, "should I bike? " + okToBike(hour1));
+                okToBike(hour1, "current");
 
                 bikeResult = ((TextView) findViewById(R.id.bikeResponse));
-
-//                if(okToBike(hour1)){
-//                    runOnUiThread(new Runnable() {
-//
-//                        @Override
-//                        public void run() {
-//                            bikeResult.setText("Yep");
-//                        }
-//                    });
-//                }else{
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            bikeResult.setText("Nope");
-//                        }
-//                    });
-//                }
 
             }
         });
@@ -166,26 +144,9 @@ public class MainActivity extends AppCompatActivity {
                 DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
                 String dateFormatted = formatter.format(date);
 
-                Log.e(LOG_TAG, "should I bike in the morning? " + okToBike(hour1));
+                okToBike(hour1, "morning");
 
                 bikeResult = ((TextView) findViewById(R.id.bikeResponse));
-
-//                if(okToBike(hour1)){
-//                    runOnUiThread(new Runnable() {
-//
-//                        @Override
-//                        public void run() {
-//                            bikeResult.setText("Yep");
-//                        }
-//                    });
-//                }else{
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            bikeResult.setText("Nope");
-//                        }
-//                    });
-//                }
 
             }
         });
@@ -202,27 +163,9 @@ public class MainActivity extends AppCompatActivity {
                 DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
                 String dateFormatted = formatter.format(date);
 
-                Log.e(LOG_TAG, "should I bike in the evening? " + okToBike(hour1));
+                okToBike(hour1, "evening");
 
                 bikeResult = ((TextView) findViewById(R.id.bikeResponse));
-
-//                if(okToBike(hour1)){
-//                    runOnUiThread(new Runnable() {
-//
-//                        @Override
-//                        public void run() {
-//                            bikeResult.setText("Yep");
-//                        }
-//                    });
-//                }else{
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            bikeResult.setText("Nope");
-//                        }
-//                    });
-//                }
-
             }
         });
     }
@@ -280,6 +223,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @SuppressLint("MissingPermission")
     public void getCurrentLocation() {
         //set criteria
         Criteria criteria = new Criteria();
@@ -317,15 +261,29 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
-    private boolean okToBike(JSONObject anHour) throws JSONException {
-        //test weatherbool system
-        for(int i = 0; i < weatherBools.size(); i++) {
-            if (weatherBools.get(i).isTrue(anHour)) {
-                return false;
-            }
+    private void okToBike(JSONObject anHour, String time) throws JSONException {
+        double temp = anHour.getDouble("temperature");
+        double wind = anHour.getDouble("windSpeed");
+        double rain = anHour.getDouble("precipProbability");
+        double humid = anHour.getDouble("humidity");
+
+        Log.v(LOG_TAG, time + "results -- temp:" + temp + ", wind: " + wind + ", rain: " + rain + ", humid: " + humid);
+
+        if(!temperatureOk(temp)){
+            Log.e(LOG_TAG, "Do not bike due to temperature");
         }
 
-        return true;
+        if(!windOk(wind)) {
+            Log.e(LOG_TAG, "Do not bike due to wind");
+        }
+
+        if(!rainOk(rain)) {
+            Log.e(LOG_TAG, "Do not bike due to rain");
+        }
+
+        if(!humidityOk(humid)){
+            Log.e(LOG_TAG, "Do not bike due to humid");
+        }
     }
 
     private void callCommute(Location location){
@@ -365,70 +323,6 @@ public class MainActivity extends AppCompatActivity {
         }else{
             return evenTime/1000;
         }
-    }
-
-    private void setBools(){
-        WeatherBool weatherBool1 = new WeatherBool();
-
-        weatherBool1.param1 = "apparentTemperature";
-        weatherBool1.operator1 = ">";
-        weatherBool1.value1 = 90;
-        weatherBool1.param2 = "humidity";
-        weatherBool1.operator2 = ">";
-        weatherBool1.value2 = 0.9;
-
-        weatherBools.add(weatherBool1);
-
-        //2
-        WeatherBool weatherBool2 = new WeatherBool();
-
-        weatherBool2.param1 = "apparentTemperature";
-        weatherBool2.operator1 = "<";
-        weatherBool2.value1 = 10;
-        weatherBool2.param2 = "windSpeed";
-        weatherBool2.operator2 = ">";
-        weatherBool2.value2 = 15;
-
-        weatherBools.add(weatherBool2);
-
-        //3
-        WeatherBool weatherBool3 = new WeatherBool();
-
-        weatherBool3.param1 = "precipIntensity";
-        weatherBool3.operator1 = ">";
-        weatherBool3.value1 = 0.3;
-        weatherBool3.param2 = "precipProbability";
-        weatherBool3.operator2 = ">";
-        weatherBool3.value2 = 0.5;
-
-        weatherBools.add(weatherBool3);
-
-        //4
-        WeatherBool weatherBool4 = new WeatherBool();
-
-        weatherBool4.param1 = "apparentTemperature";
-        weatherBool4.operator1 = "<";
-        weatherBool4.value1 = 5;
-
-        weatherBools.add(weatherBool4);
-
-        //5
-        WeatherBool weatherBool5 = new WeatherBool();
-
-        weatherBool5.param1 = "apparentTemperature";
-        weatherBool5.operator1 = ">";
-        weatherBool5.value1 = 100;
-
-        weatherBools.add(weatherBool5);
-
-        //6
-        WeatherBool weatherBool6 = new WeatherBool();
-
-        weatherBool6.param1 = "windSpeed";
-        weatherBool6.operator1 = ">";
-        weatherBool6.value1 = 20;
-
-        weatherBools.add(weatherBool6);
     }
   
   private void updateMapCenter(Location location, int zoomLevel){
@@ -510,49 +404,31 @@ public class MainActivity extends AppCompatActivity {
         return lastLocation;
     }
 
-    private ArrayList<String> doNotInvite(String[] inviteees){
-        ArrayList<String> noInviteList = new ArrayList<String>();
-        Invitee[] reviewedInvitees = new Invitee[inviteees.length];
+    private void grabCurrentStats() {
+        SharedPreferences prefs = getSharedPreferences(PREFERENCE_NAME, MODE_PRIVATE);
 
-        for(int i = inviteees.length - 1; i >= 0; i--){
-            String[] thisInviteeString = inviteees[i].split(",");
+        minTemp = prefs.getInt("minTemp", 30);
+        maxTemp = prefs.getInt("maxTemp", 100);
+        windSpd = prefs.getInt("windSpd", 10);
+        rainChance = prefs.getInt("rainChance", 50);
+        humidity = prefs.getInt("humidity", 80);
 
-            Invitee thisInvitee = new Invitee(thisInviteeString);
-
-            int netCandy = thisInvitee.candyBrought - thisInvitee.candyCosumed;
-
-            for(int a = 0; a < inviteees.length - 1 - i; a++){
-                Invitee reviewInvitee = reviewedInvitees[a];
-
-                if(reviewInvitee.invitor.equals(thisInvitee.guest)){
-                    netCandy = netCandy + reviewInvitee.netCandy;
-                }
-            }
-
-            thisInvitee.netCandy = netCandy;
-            reviewedInvitees[inviteees.length - 1 - i] = thisInvitee;
-
-            if(netCandy < 0){
-                noInviteList.add(thisInvitee.guest);
-            }
-        }
-
-        return noInviteList;
+        Log.v(LOG_TAG, "currentStats -- mintemp:" + minTemp + ", maxtemp:" + maxTemp + ", windSpd: " + windSpd + ", rainChance: " + rainChance + ", humidity: " + humidity);
     }
-}
 
-class Invitee {
-    //initialize bool doubles
-    String guest;
-    String invitor;
-    int candyBrought;
-    int candyCosumed;
-    int netCandy;
+    private boolean temperatureOk(double temperature) {
+        return temperature < maxTemp && temperature > minTemp;
+    }
 
-    public Invitee(String[] input) {
-        guest = input[0];
-        invitor = input[1];
-        candyBrought = Integer.parseInt(input[2]);
-        candyCosumed = Integer.parseInt(input[3]);
+    private boolean windOk(double wind) {
+        return wind < windSpd;
+    }
+
+    private boolean rainOk(double rain) {
+        return rain < rainChance;
+    }
+
+    private boolean humidityOk(double humidityPercent) {
+        return humidityPercent < humidity;
     }
 }

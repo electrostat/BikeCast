@@ -3,9 +3,6 @@ package agbytech.com.bikecast.Listeners;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by Anthony-Parkour on 11/23/16.
- */
 public class ForecastListener {
     public OnForecastChangeListener listener;
 
@@ -24,7 +21,6 @@ public class ForecastListener {
         currently = aCurrent;
 
         if(listener != null){
-
             listener.onForecastChanged(aCurrent);
         }else{
         }
