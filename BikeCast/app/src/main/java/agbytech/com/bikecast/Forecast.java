@@ -54,7 +54,6 @@ public class Forecast {
 
                     JSONObject jsonObject = new JSONObject(response);
 
-                    Log.e(LOG_TAG, "entire object: " + jsonObject);
                     JSONObject currentlyObject = jsonObject.getJSONObject("currently");
 
                     forecastListener.set(currentlyObject);
