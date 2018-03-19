@@ -3,10 +3,6 @@ package agbytech.com.bikecast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by Anthony-Parkour on 3/29/17.
- */
-
 public class WeatherBool {
     private final String LOG_TAG="weatherbool";
 
