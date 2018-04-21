@@ -270,20 +270,22 @@ public class MainActivity extends AppCompatActivity {
         Log.v(LOG_TAG, time + "results -- temp:" + temp + ", wind: " + wind + ", rain: " + rain + ", humid: " + humid);
 
         if(!temperatureOk(temp)){
-            Log.e(LOG_TAG, "Do not bike due to temperature");
+            updateUI(time, false, "temp");
         }
 
         if(!windOk(wind)) {
-            Log.e(LOG_TAG, "Do not bike due to wind");
+            updateUI(time, false, "wind");
         }
 
         if(!rainOk(rain)) {
-            Log.e(LOG_TAG, "Do not bike due to rain");
+            updateUI(time, false, "rain");
         }
 
         if(!humidityOk(humid)){
-            Log.e(LOG_TAG, "Do not bike due to humid");
+            updateUI(time, false, "humidity");
         }
+
+        updateUI(time, true, "all");
     }
 
     private void callCommute(Location location){
@@ -430,5 +432,14 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean humidityOk(double humidityPercent) {
         return humidityPercent < humidity;
+    }
+
+    private void updateUI(String time, boolean status, String reason) {
+        if (status) {
+            Log.e(LOG_TAG, "Bike " + time +  " all good");
+        } else {
+            Log.e(LOG_TAG, "Do not bike " + time +  " due to " + reason);
+        }
+
     }
 }
