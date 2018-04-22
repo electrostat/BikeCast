@@ -5,6 +5,11 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -41,6 +46,8 @@ import agbytech.com.bikecast.Listeners.OnEveningChangeListener;
 import agbytech.com.bikecast.Listeners.OnForecastChangeListener;
 import agbytech.com.bikecast.Listeners.OnMorningChangeListener;
 
+import static android.graphics.Paint.ANTI_ALIAS_FLAG;
+
 public class MainActivity extends AppCompatActivity {
     private final String LOG_TAG="BikeCast";
 
@@ -66,12 +73,18 @@ public class MainActivity extends AppCompatActivity {
     private int rainChance;
     private int humidity;
 
+    //stoplights
+    private FloatingActionButton nowLight;
+    private FloatingActionButton amLight;
+    private FloatingActionButton pmLight;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setupLights();
 
         bikeResult = (TextView) findViewById(R.id.bikeResponse);
 
@@ -170,33 +183,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode,
-//                                           String permissions[], int[] grantResults) {
-//        switch (requestCode) {
-//            case REQUEST_CODE_PERMISSION: {
-//                // If request is cancelled, the result arrays are empty.
-//                if (grantResults.length > 0
-//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//
-//                    // permission was granted, yay! Do the
-//                    // contacts-related task you need to do.
-//
-//                    getCurrentLocation();
-//
-//                } else {
-//
-//                    // permission denied, boo! Disable the
-//                    // functionality that depends on this permission.
-//                }
-//                return;
-//            }
-//
-//            // other 'case' lines to check for other
-//            // permissions this app might request
-//        }
-//    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -267,23 +253,23 @@ public class MainActivity extends AppCompatActivity {
         double rain = anHour.getDouble("precipProbability");
         double humid = anHour.getDouble("humidity");
 
-        Log.v(LOG_TAG, time + "results -- temp:" + temp + ", wind: " + wind + ", rain: " + rain + ", humid: " + humid);
-
         if(!temperatureOk(temp)){
-            Log.e(LOG_TAG, "Do not bike due to temperature");
+            updateUI(time, false, "temp");
         }
 
         if(!windOk(wind)) {
-            Log.e(LOG_TAG, "Do not bike due to wind");
+            updateUI(time, false, "wind");
         }
 
         if(!rainOk(rain)) {
-            Log.e(LOG_TAG, "Do not bike due to rain");
+            updateUI(time, false, "rain");
         }
 
         if(!humidityOk(humid)){
-            Log.e(LOG_TAG, "Do not bike due to humid");
+            updateUI(time, false, "humidity");
         }
+
+        updateUI(time, true, "all");
     }
 
     private void callCommute(Location location){
@@ -430,5 +416,72 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean humidityOk(double humidityPercent) {
         return humidityPercent < humidity;
+    }
+
+    private void updateUI(String time, boolean status, String reason) {
+
+        if (time.equalsIgnoreCase("current")) {
+            updateNowLight(status);
+        } else if (time.equalsIgnoreCase("morning")) {
+            updateAmLight(status);
+        } else {
+            updatePmLight(status);
+        }
+
+        if (status) {
+            Log.e(LOG_TAG, "Bike " + time +  " all good");
+        } else {
+            Log.e(LOG_TAG, "Do not bike " + time +  " due to " + reason);
+        }
+    }
+
+    private void updateNowLight(boolean status) {
+        if (status) {
+            nowLight.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorGo)));
+        } else {
+            nowLight.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorStop)));
+        }
+    }
+
+    private void updateAmLight(boolean status) {
+        if (status) {
+            amLight.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorGo)));
+        } else {
+            amLight.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorStop)));
+        }
+    }
+
+    private void updatePmLight(boolean status) {
+        if (status) {
+            pmLight.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorGo)));
+        } else {
+            pmLight.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorStop)));
+        }
+    }
+
+    private void setupLights() {
+        nowLight = findViewById(R.id.nowLight);
+        nowLight.setImageBitmap(textAsBitmap("NOW", 40F, Color.WHITE));
+
+        amLight = findViewById(R.id.amLight);
+        amLight.setImageBitmap(textAsBitmap("AM", 40F, Color.WHITE));
+
+        pmLight = findViewById(R.id.pmLight);
+        pmLight.setImageBitmap(textAsBitmap("PM", 40F, Color.WHITE));
+    }
+
+    private Bitmap textAsBitmap(String text, Float textSize, int textColor) {
+        Paint paint  = new Paint(ANTI_ALIAS_FLAG);
+        paint.setTextSize(textSize);
+        paint.setColor(textColor);
+        paint.setTextAlign(Paint.Align.LEFT);
+        Float baseline  = -paint.ascent();
+        int width = (int) (paint.measureText(text) + 0.0f);
+        int height = (int) (baseline + paint.descent() + 0.0f);
+        Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+        Canvas canvas  = new Canvas(image);
+        canvas.drawText(text, 0F, baseline, paint);
+        return image;
     }
 }

@@ -30,6 +30,40 @@
         mapbox:mapbox_cameraZoom="11" >
 
         <android.support.design.widget.FloatingActionButton
+            android:id="@+id/nowLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|left"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="65dp"
+            android:clickable="false"
+            android:tint="@color/colorPrimaryDark"
+            app:backgroundTint="@color/lightGray"
+            app:borderWidth="3dp"
+            android:background="@drawable/fab_background"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/amLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="65dp"
+            android:tint="@color/colorPrimaryDark"
+            app:backgroundTint="@color/lightGray"
+            app:borderWidth="3dp"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/pmLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|right"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="65dp"
+            android:tint="@color/colorPrimaryDark"
+            app:backgroundTint="@color/lightGray"
+            app:borderWidth="3dp"/>
+
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -39,40 +73,3 @@
     </com.mapbox.mapboxsdk.maps.MapView>
 
 </RelativeLayout>
-
-
-<!--<android.support.design.widget.CoordinatorLayout-->
-    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
-    <!--xmlns:tools="http://schemas.android.com/tools"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:fitsSystemWindows="true"-->
-    <!--tools:context="agbytech.com.bikecast.MainActivity">-->
-
-    <!--<android.support.design.widget.AppBarLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:theme="@style/AppTheme.AppBarOverlay">-->
-
-        <!--<android.support.v7.widget.Toolbar-->
-            <!--android:id="@+id/toolbar"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="?attr/actionBarSize"-->
-            <!--android:background="?attr/colorPrimary"-->
-            <!--app:popupTheme="@style/AppTheme.PopupOverlay" />-->
-
-    <!--</android.support.design.widget.AppBarLayout>-->
-
-    <!--<com.mapbox.mapboxsdk.maps.MapView-->
-        <!--android:id="@+id/mapView"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--mapbox:mapbox_cameraTargetLat="40.73581"-->
-        <!--mapbox:mapbox_cameraTargetLng="-73.99155"-->
-        <!--mapbox:mapbox_styleUrl="@string/mapbox_style_mapbox_streets"-->
-        <!--mapbox:mapbox_cameraZoom="11" />-->
-
-    <!--<include layout="@layout/content_main" />-->
-
-<!--</android.support.design.widget.CoordinatorLayout>-->
