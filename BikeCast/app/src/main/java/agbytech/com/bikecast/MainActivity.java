@@ -255,18 +255,22 @@ public class MainActivity extends AppCompatActivity {
 
         if(!temperatureOk(temp)){
             updateUI(time, false, "temp");
-        }
-
-        if(!windOk(wind)) {
-            updateUI(time, false, "wind");
+            return;
         }
 
         if(!rainOk(rain)) {
             updateUI(time, false, "rain");
+            return;
+        }
+
+        if(!windOk(wind)) {
+            updateUI(time, false, "wind");
+            return;
         }
 
         if(!humidityOk(humid)){
             updateUI(time, false, "humidity");
+            return;
         }
 
         updateUI(time, true, "all");
