@@ -253,6 +253,9 @@ public class MainActivity extends AppCompatActivity {
         double rain = anHour.getDouble("precipProbability");
         double humid = anHour.getDouble("humidity");
 
+        int tempColor = determineLightColor(temp, "temperature");
+        Log.e(LOG_TAG, "tempcolor:  " + tempColor);
+
         if(!temperatureOk(temp)){
             updateUI(time, false, "temp");
             return;
@@ -487,5 +490,25 @@ public class MainActivity extends AppCompatActivity {
         Canvas canvas  = new Canvas(image);
         canvas.drawText(text, 0F, baseline, paint);
         return image;
+    }
+
+//    double temp = anHour.getDouble("temperature");
+//    double wind = anHour.getDouble("windSpeed");
+//    double rain = anHour.getDouble("precipProbability");
+//    double humid = anHour.getDouble("humidity");
+
+    private int determineLightColor(double value, String category) {
+
+        if (category.equalsIgnoreCase("temperature")) {
+            if (value > maxTemp && value < minTemp) {
+                return R.color.colorStop;
+            } else if (maxTemp - value <= 5 || value - minTemp <= 5) {
+                return R.color.colorCaution;
+            } else {
+                return R.color.colorGo;
+            }
+        }
+
+        return 0;
     }
 }
